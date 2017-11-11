@@ -11,15 +11,14 @@ A docker-compose based media system for running plex and additional services
 | Plex         | 32400 | It's plex          |
 
 Tested and working with:
-
+```
 Docker version 17.09.0-ce, build afdb6d4
-
 docker-compose version 1.13.0, build 1719ceb
-
 Ubuntu 16
+```
 
 
-This setup assumes you have 3 directory to run from:
+This setup assumes you have 3 directory to run from ( look at the .env ):
 
 /share/Docker -> Where docker logs, configs and databases goes
 
