@@ -11,23 +11,38 @@ A docker-compose based media system for running plex and additional services
 | Plex         | 32400 | It's plex          |
 
 Tested and working with:
+
 Docker version 17.09.0-ce, build afdb6d4
+
 docker-compose version 1.13.0, build 1719ceb
+
 Ubuntu 16
 
+
 This setup assumes you have 3 directory to run from:
+
 /share/Docker -> Where docker logs, configs and databases goes
+
 /share/Multimedia -> Where plex will look for downloaded content
+
 /share/Download -> Where transmission will download to 
+
 
 #### Setup
 Before you run anything you need to fill out the .env file
+
 Plex:
+
 CLAIM_CODE= https://github.com/plexinc/pms-docker
+
 NAME= Is the name that will show on the top of plex
+
 IP= The server ip, ex: 192.168.1.25
+
 VPN:
+
 I've only tested this with PIA, normal user/pass will work
+
 
 #### Usage
 ```
@@ -48,7 +63,7 @@ docker-compose up -d
 Load Indexers into Jackett
 
 ##### Sonarr
-setup transmission under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
+- setup transmission under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
 
 | Settings  | Value              |
 | --------  | ------------------ |
@@ -57,11 +72,12 @@ setup transmission under /settings/downloadclient, you'll need to show Advanced 
 | Url Base  | /transmission      |
 | Directory | /data/completed/tv |
 
-Add Indexers under /settings/indexers. Jackett has instructions on the bottom of it's UI
+- Add Indexers under /settings/indexers. Jackett has instructions on the bottom of it's UI
+
 NOTE: When adding TV shows, set the path the /tv/
 
 ##### Radarr
-setup transmission under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
+- setup transmission under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
 
 | Settings  | Value                  |
 | --------  | ---------------------- |
@@ -70,13 +86,14 @@ setup transmission under /settings/downloadclient, you'll need to show Advanced 
 | Url Base  | /transmission          |
 | Directory | /data/completed/movies |
 
-Add Indexers under /settings/indexers. Jackett has instructions on the bottom of it's UI
+- Add Indexers under /settings/indexers. Jackett has instructions on the bottom of it's UI
+
 NOTE: When adding Movies, set the path to /movies/
 
 ##### Plex
-Add Library, Movies, Add Folder, /data/Videos/Movies
-Add Library, TV, Add Folder, /data/Videos/TV
-Plex should automagically pick up content as it's downloaded
+- Add Library, Movies, Add Folder, /data/Videos/Movies
+- Add Library, TV, Add Folder, /data/Videos/TV
+- Plex should automagically pick up content as it's downloaded
 
 
 
