@@ -71,7 +71,7 @@ Load Indexers into Jackett
 | Url Base  | /transmission      |
 | Directory | /data/completed/tv |
 
-- Add Indexers under /settings/indexers. Jackett has instructions on the bottom of it's UI
+- Add Indexers to Jackett, then add them as "Torznab" indexes under SERVERIP:8989/settings/indexers. Jackett has instruction on the bottom of it's UI on what to add to sonarr
 
 NOTE: When adding TV shows, set the path the /tv/
 
@@ -85,7 +85,7 @@ NOTE: When adding TV shows, set the path the /tv/
 | Url Base  | /transmission          |
 | Directory | /data/completed/movies |
 
-- Add Indexers under /settings/indexers. Jackett has instructions on the bottom of it's UI
+- Add Indexers to Jackett, then add them as "Torznab" indexes under SERVERIP:7878/settings/indexers. Jackett has instruction on the bottom of it's UI on what to add to radarr
 
 NOTE: When adding Movies, set the path to /movies/
 
@@ -98,6 +98,10 @@ NOTE: When adding Movies, set the path to /movies/
 
 #### Additional notes
 Transmission will attempt to unrar files it detects as .rar, this works *most* of the time.
+
+
+The transmission/openvpn container will sometimes have "errors" in it's logs. Unless your unable to download/upload anything it shoulden't be a problem.
+
 
 If you're having trouble with transcode streaming, it can help to add a local transcode directory. In my case I made a small (4GB) [tmpfs](https://www.jamescoyle.net/how-to/943-create-a-ram-disk-in-linux) at /transcode and added that to the list of volumes in docker compose under the plex service. Should look like this:
 ```
