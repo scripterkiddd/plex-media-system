@@ -71,7 +71,9 @@ Load Indexers into Jackett
 | Url Base  | /transmission      |
 | Directory | /data/completed/tv |
 
-- Add Indexers to Jackett, then add them as "Torznab" indexes under SERVERIP:8989/settings/indexers. Jackett has instruction on the bottom of it's UI on what to add to sonarr
+- Add Indexers to Jackett, then add them as "Torznab" indexes under SERVERIP:8989/settings/indexers. All indexes in jackett can be add with 1 torznab index like this:
+
+![alt text](https://i.imgur.com/yPSKg42.png "Jackett Sonarr settings")
 
 NOTE: When adding TV shows, set the path the /tv/
 
@@ -85,7 +87,9 @@ NOTE: When adding TV shows, set the path the /tv/
 | Url Base  | /transmission          |
 | Directory | /data/completed/movies |
 
-- Add Indexers to Jackett, then add them as "Torznab" indexes under SERVERIP:7878/settings/indexers. Jackett has instruction on the bottom of it's UI on what to add to radarr
+- Add Indexers to Jackett, then add them as "Torznab" index under SERVERIP:7878/settings/indexers. All indexes in jackett can be add with 1 torznab index like this:
+
+![alt text](https://i.imgur.com/yPSKg42.png "Jackett Radarr settings")
 
 NOTE: When adding Movies, set the path to /movies/
 
