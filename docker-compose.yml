@@ -1,48 +1,54 @@
-version: "2"
+version: "2.4"
 
 services:
-  transmission:
-    image: haugene/transmission-openvpn
-    container_name: transmission-openvpn
-    privileged: true
+  deluge:
+    image: binhex/arch-delugevpn
+    container_name: delugevpn
     restart: always
     ports:
-      - "9091:9091"
-    networks:
-      - plexnet
+      - "8112:8112"
+      - "8118:8118"
+      - "58846:58846"
+      - "58946:58946"
     dns:
       - 8.8.8.8
       - 8.8.4.4
+      - 209.222.18.222
+      - 209.222.18.218
+      - 37.235.1.174
+      - 1.1.1.1
+      - 37.235.1.177
+      - 1.0.0.1
+    networks:
+      - plexnet
     cap_add:
       - NET_ADMIN
     environment:
-      - OPENVPN_PROVIDER=${VPN_PROVIDER}
-      - OPENVPN_CONFIG=${VPN_CONFIG}
-      - OPENVPN_USERNAME=${VPN_USERNAME}
-      - OPENVPN_PASSWORD=${VPN_PASSWORD}
-      - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60
-      - LOCAL_NETWORK=${LOCAL_NET}
-      - TRANSMISSION_SPEED_LIMIT_UP=${TRANSMISSION_UP}
-      - TRANSMISSION_SPEED_LIMIT_UP_ENABLED=true
-      - TRANSMISSION_SPEED_LIMIT_DOWN=${TRANSMISSION_DOWN}
-      - TRANSMISSION_SPEED_LIMIT_DOWN_ENABLED=true
-      - TRANSMISSION_SCRIPT_TORRENT_DONE_ENABLED=true
-      - TRANSMISSION_SCRIPT_TORRENT_DONE_FILENAME=/bin/unrar_torrent.sh
-      - TRANSMISSION_DOWNLOAD_QUEUE_ENABLED=true
-      - TRANSMISSION_DOWNLOAD_QUEUE_SIZE=15
+      - PUID=911
+      - PGID=911
+      - VPN_ENABLED=yes
+      - VPN_USER=${VPN_USERNAME}
+      - VPN_PASS=${VPN_PASSWORD}
+      - VPN_PROV=pia
+      - STRICT_PORT_FORWARD=yes
+      - ENABLE_PRIVOXY=no
+      - LAN_NETWORK=192.168.1.0/24
+      - DELUGE_DAEMON_LOG_LEVEL=info
+      - DELUGE_WEB_LOG_LEVEL=info
+      - NAME_SERVERS=209.222.18.222,37.235.1.174,1.1.1.1,8.8.8.8,209.222.18.218,37.235.1.177,1.0.0.1,8.8.4.4
+      - DEBUG=true
+      - UMASK=000
     volumes:
-      - ${CONFIG_DIR}/transmission:/data/transmission-home
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONFIG_DIR}/deluge:/config
       - ${DOWNLOAD_DIR}/Videos/TV:/data/completed/tv
       - ${DOWNLOAD_DIR}/Videos/Movies:/data/completed/movies
-      - ${DOWNLOAD_DIR}/transmission/completed:/data/completed
-      - ${DOWNLOAD_DIR}/transmission/incomplete:/data/incomplete
-      - ${PWD}/unrar_torrent.sh:/bin/unrar_torrent.sh
-      - /etc/localtime:/etc/localtime:ro
-    devices:
-      - /dev/net/tun 
+      - ${DOWNLOAD_DIR}/deluge/completed:/data/completed
+      - ${DOWNLOAD_DIR}/deluge/incomplete:/data/incomplete
+      - ${CONFIG_DIR}/torrents:/data/torrents
 
   radarr:
-    image: linuxserver/radarr
+    image: linuxserver/radarr:latest
     container_name: radarr
     restart: always
     ports:
@@ -58,6 +64,7 @@ services:
       - ${DOWNLOAD_DIR}/Videos/Movies:/data/completed/movies/
       - ${MEDIA_DIR}/Videos/Movies:/movies
       - /etc/localtime:/etc/localtime:ro
+      - ${TEMP_DIR}/radarr:/tmp
   
   sonarr:
     image: linuxserver/sonarr
@@ -76,7 +83,27 @@ services:
       - ${DOWNLOAD_DIR}/Videos/TV:/data/completed/tv/
       - ${MEDIA_DIR}/Videos/TV:/tv
       - /etc/localtime:/etc/localtime:ro
-      
+      - ${TEMP_DIR}/sonarr:/tmp
+
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
+    restart: always
+    ports:
+      - "6767:6767"
+    networks:
+      - plexnet
+    environment:
+      - PUID=911
+      - PGID=911
+      - TZ=America/Chicago
+    volumes:
+      - ${CONFIG_DIR}/bazarr:/config
+      - ${MEDIA_DIR}/Videos/Movies:/movies
+      - ${MEDIA_DIR}/Videos/TV:/tv
+      - /etc/localtime:/etc/localtime:ro
+      - ${TEMP_DIR}/bazarr:/tmp
+
   jackett:
     image: linuxserver/jackett
     container_name: jackett
@@ -93,6 +120,7 @@ services:
       - ${CONFIG_DIR}/jackett/config:/config
       - ${CONFIG_DIR}/jackett/downloads:/downloads
       - /etc/localtime:/etc/localtime:ro
+      - ${TEMP_DIR}/jackett:/tmp
 
   plex:
     image: plexinc/pms-docker:plexpass
@@ -115,30 +143,30 @@ services:
       - PLEX_UID=911
       - PLEX_GID=911
       - TZ=America/Chicago
-      - ADVERTISE_IP=http://${IP}:32400/
+      - ADVERTISE_IP=http://192.168.1.15:32400/
       - PLEX_CLAIM=${CLAIM_CODE}
-    hostname: ${NAME}
+    hostname: Gilliam
     volumes:
       - ${CONFIG_DIR}/plex:/config
       - ${MEDIA_DIR}:/data
       - /etc/localtime:/etc/localtime:ro
-
-  plexpy:
-    image: linuxserver/plexpy
-    container_name: plexpy
+      - ${TEMP_DIR}/plex:/tmp
+    devices:
+      - /dev/dri:/dev/dri
+  tautulli:
+    image: linuxserver/tautulli
+    container_name: tautulli
     restart: always
     ports:
       - "8181:8181"
     environment:
-      - PLEX_UID=911
-      - PLEX_GID=911
+      - PUID=911
+      - PGID=911
       - TZ=America/Chicago
     volumes: 
       - ${CONFIG_DIR}/plexpy:/config 
-      - ${CONFIG_DIR}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro 
       - /etc/localtime:/etc/localtime:ro
-
+      - ${TEMP_DIR}/tautulli:/tmp
 networks:
   plexnet:
     driver: bridge
-

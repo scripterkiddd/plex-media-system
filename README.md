@@ -3,22 +3,15 @@ A docker-compose based media system for running plex and additional services
 
 | Service      | Port  | Description        |
 | ------------ | ----- | ------------------ |
-| Transmission | 9091  | [Torrent Downloader](https://github.com/transmission/transmission) |
+| Deluge       | 8112  | [Torrent Downloader](https://github.com/deluge-torrent/deluge) |
 | Sonarr       | 8989  | [TV Show PVR](https://github.com/Sonarr/Sonarr)       |
 | Radarr       | 7878  | [Movie PVR](https://github.com/Radarr/Radarr)          |
-| PlexPy       | 8181  | [Plex analytics](https://github.com/JonnyWong16/plexpy)     |
+| Tautulli     | 8181  | [Plex analytics](https://github.com/Tautulli/Tautulli)     |
 | Jackett      | 9117  | [Index normalizer](https://github.com/Jackett/Jackett)   |
 | Plex         | 32400 | It's plex          |
 
-Tested and working with:
-```
-Docker version 17.09.0-ce, build afdb6d4
-docker-compose version 1.13.0, build 1719ceb
-Ubuntu 16
-```
 
-
-This setup assumes you have 3 directory to run from ( look at the .env ):
+This setup assumes you have 4 directory to run from ( look at the .env ):
 
 /share/Docker -> Where docker logs, configs and databases goes
 
@@ -26,6 +19,7 @@ This setup assumes you have 3 directory to run from ( look at the .env ):
 
 /share/Download -> Where transmission will download to 
 
+/share/DockerTemp -> Where to put tmp files
 
 #### Setup
 Before you run anything you need to fill out the .env file
@@ -42,6 +36,8 @@ VPN:
 
 I've only tested this with PIA, normal user/pass will work
 
+Make sure you have a .openvpn config file in the config dir for deluge: $config/openvpn/theworld.openvpn
+If using PIA make sure you select a site that has port fowarding enabled.
 
 #### Usage
 ```
@@ -62,13 +58,13 @@ docker-compose up -d
 Load Indexers into Jackett
 
 ##### Sonarr
-- setup transmission under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
+- setup deluge under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
 
 | Settings  | Value              |
 | --------  | ------------------ |
-| host      | transmission       |
-| port      | 9091               |
-| Url Base  | /transmission      |
+| host      | deluge       |
+| port      | 8112               |
+| Url Base  | /deluge      |
 | Directory | /data/completed/tv |
 
 - Add Indexers to Jackett, then add them as "Torznab" indexes under SERVERIP:8989/settings/indexers. All indexes in jackett can be add with 1 torznab index like this:
@@ -78,13 +74,13 @@ Load Indexers into Jackett
 NOTE: When adding TV shows, set the path the /tv/
 
 ##### Radarr
-- setup transmission under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
+- setup deluge under /settings/downloadclient, you'll need to show Advanced Settings ( slider on the tab )
 
 | Settings  | Value                  |
 | --------  | ---------------------- |
-| host      | transmission           |
-| port      | 9091                   |
-| Url Base  | /transmission          |
+| host      | deluge           |
+| port      | 8112                   |
+| Url Base  | /deluge          |
 | Directory | /data/completed/movies |
 
 - Add Indexers to Jackett, then add them as "Torznab" index under SERVERIP:7878/settings/indexers. All indexes in jackett can be add with 1 torznab index like this:
@@ -101,20 +97,4 @@ NOTE: When adding Movies, set the path to /movies/
 
 
 #### Additional notes
-Transmission will attempt to unrar files it detects as .rar, this works *most* of the time.
-
-
-The transmission/openvpn container will sometimes have "errors" in it's logs. Unless your unable to download/upload anything it shoulden't be a problem.
-
-
-If you're having trouble with transcode streaming, it can help to add a local transcode directory. In my case I made a small (4GB) [tmpfs](https://www.jamescoyle.net/how-to/943-create-a-ram-disk-in-linux) at /transcode and added that to the list of volumes in docker compose under the plex service. Should look like this:
-```
-	volumes:
-      - ${CONFIG_DIR}/plex:/config
-      - ${MEDIA_DIR}:/data
-      - /etc/localtime:/etc/localtime:ro
-      - /transcode:/transcode 
-```
-Then set plex to use that under it's server settings/transcoder
-
-PRs are welcome
+The deluge/openvpn container will sometimes have "errors" in it's logs. Unless your unable to download/upload anything it shoulden't be a problem.
